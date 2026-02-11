@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from '../services/api';
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X, Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { exportToPDF, exportToExcel } from '../utils/exportUtils';
 
 const Stores = () => {
     const [stores, setStores] = useState([]);
@@ -16,6 +17,30 @@ const Stores = () => {
             const response = await axios.get('/stores');
             setStores(response.data.stores || []);
         } catch (err) { setError('Failed to fetch stores'); } finally { setLoading(false); }
+    };
+
+    const handleExportPDF = () => {
+        const columns = [
+            { header: 'ID', key: 'code' },
+            { header: 'Store Name', key: 'name' },
+            { header: 'Location', key: 'location' },
+            { header: 'Created At', key: 'createdAt' }
+        ];
+        const data = stores.map(s => ({
+            ...s,
+            createdAt: new Date(s.createdAt).toLocaleDateString()
+        }));
+        exportToPDF("Stores Report", columns, data, "stores_report.pdf");
+    };
+
+    const handleExportExcel = () => {
+        const data = stores.map(s => ({
+            ID: s.code,
+            Name: s.name,
+            Location: s.location,
+            CreatedAt: new Date(s.createdAt).toLocaleDateString()
+        }));
+        exportToExcel(data, "stores_report.xlsx");
     };
 
     const handleSubmit = async (e) => {
@@ -35,9 +60,17 @@ const Stores = () => {
                     <h1 className="page-title">Stores Management</h1>
                     <p className="page-subtitle">Manage all physical store locations</p>
                 </div>
-                <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-                    <Plus size={20} /> Add New Store
-                </button>
+                <div className="flex gap-2">
+                    <button className="btn-secondary flex items-center gap-2" onClick={handleExportPDF} title="Export PDF">
+                        <FileText size={18} /> <span className="hidden-mobile">PDF</span>
+                    </button>
+                    <button className="btn-secondary flex items-center gap-2" onClick={handleExportExcel} title="Export Excel">
+                        <FileSpreadsheet size={18} /> <span className="hidden-mobile">Excel</span>
+                    </button>
+                    <button className="btn-primary flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
+                        <Plus size={20} /> Add New Store
+                    </button>
+                </div>
             </div>
 
             {error && <div className="error-alert">{error}</div>}
