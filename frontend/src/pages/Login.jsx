@@ -32,18 +32,21 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <div className="glass-card login-card">
+        <div className="login-page">
+            <div className="login-card fade-in">
                 <div className="login-header">
-                    <img src={logo} alt="Hiru Logo" className="login-logo-img" />
-                    <p className="login-subtitle">Sign in to your account</p>
+                    <div className="login-logo">
+                        <img src={logo} alt="H" style={{ width: '32px' }} />
+                    </div>
+                    <h1>Hiru POS</h1>
+                    <p>Welcome back! Please login.</p>
                 </div>
 
-                {error && <div className="error-msg">{error}</div>}
+                {error && <div className="error-alert">{error}</div>}
 
                 <form onSubmit={handleLogin} className="login-form">
                     <div className="form-group">
-                        <label>Email Address</label>
+                        <label className="form-label">Email Address</label>
                         <input
                             type="email"
                             className="input-glass"
@@ -54,8 +57,8 @@ const Login = () => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label>Password</label>
+                    <div className="form-group" style={{ marginBottom: '1rem' }}>
+                        <label className="form-label">Password</label>
                         <input
                             type="password"
                             className="input-glass"
@@ -66,16 +69,18 @@ const Login = () => {
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="button" className="forgot-password">Forgot password?</button>
-                    </div>
-
-                    <button type="submit" className="btn-primary btn-block" disabled={loading}>
-                        {loading ? 'Signing in...' : 'Sign In'}
+                    <button type="submit" className="btn-primary login-btn" disabled={loading}>
+                        {loading ? 'Authenticating...' : 'Sign In'}
                     </button>
 
+                    <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
+                            Demo: <b>admin@hiru.lk</b> / <b>Admin@123</b>
+                        </p>
+                    </div>
+
                     <p className="login-footer">
-                        Don't have an account? <span className="link-orange">Contact Admin</span>
+                        Forgot your password? <span style={{ color: 'var(--primary-orange)', cursor: 'pointer' }}>Contact System Admin</span>
                     </p>
                 </form>
             </div>

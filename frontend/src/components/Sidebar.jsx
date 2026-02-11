@@ -33,9 +33,12 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className="sidebar-container glass-card">
-            <div className="sidebar-header">
-                <img src={logo} alt="Hiru Logo" className="sidebar-logo-img" />
+        <aside className="sidebar">
+            <div className="sidebar-logo">
+                <div className="logo-icon">
+                    <img src={logo} alt="H" style={{ width: '22px' }} />
+                </div>
+                <span>Hiru POS</span>
             </div>
 
             <nav className="sidebar-nav">
@@ -58,11 +61,11 @@ const Sidebar = () => {
 
             <div className="sidebar-footer">
                 <button className="logout-btn" onClick={logout}>
-                    <LogOut size={24} />
+                    <LogOut size={20} />
                     <span>Logout</span>
                 </button>
             </div>
-        </div>
+        </aside>
     );
 };
 

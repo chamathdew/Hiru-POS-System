@@ -55,19 +55,19 @@ const Stores = () => {
 
     return (
         <div className="page-container fade-in">
-            <div className="flex-between mb-6">
+            <div className="page-header">
                 <div>
                     <h1 className="page-title">Stores Management</h1>
                     <p className="page-subtitle">Manage all physical store locations</p>
                 </div>
-                <div className="flex gap-2">
-                    <button className="btn-secondary flex items-center gap-2" onClick={handleExportPDF} title="Export PDF">
+                <div className="flex gap-2 mb-2">
+                    <button className="btn-secondary" onClick={handleExportPDF} title="Export PDF">
                         <FileText size={18} /> <span className="hidden-mobile">PDF</span>
                     </button>
-                    <button className="btn-secondary flex items-center gap-2" onClick={handleExportExcel} title="Export Excel">
+                    <button className="btn-secondary" onClick={handleExportExcel} title="Export Excel">
                         <FileSpreadsheet size={18} /> <span className="hidden-mobile">Excel</span>
                     </button>
-                    <button className="btn-primary flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
+                    <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
                         <Plus size={20} /> Add New Store
                     </button>
                 </div>
@@ -75,8 +75,8 @@ const Stores = () => {
 
             {error && <div className="error-alert">{error}</div>}
 
-            {loading ? <div className="loading-state">Loading...</div> : (
-                <div className="table-container glass-card">
+            {loading ? <div className="loading-state">Loading stores...</div> : (
+                <div className="table-container fade-in">
                     <table className="custom-table">
                         <thead>
                             <tr>
@@ -90,15 +90,19 @@ const Stores = () => {
                         <tbody>
                             {stores.map(store => (
                                 <tr key={store._id}>
-                                    <td className="font-mono text-xs text-orange-400">{store.code}</td>
-                                    <td className="font-bold text-white">{store.name}</td>
-                                    <td>{store.location}</td>
-                                    <td>{new Date(store.createdAt).toLocaleDateString()}</td>
+                                    <td className="id-cell">{store.code}</td>
+                                    <td style={{ fontWeight: 600 }}>{store.name}</td>
+                                    <td style={{ color: 'var(--text-secondary)' }}>{store.location}</td>
+                                    <td style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
+                                        {new Date(store.createdAt).toLocaleDateString()}
+                                    </td>
                                     <td>
-                                        <button className="action-btn delete" onClick={async () => {
-                                            if (window.confirm("Delete store?")) {
-                                                await axios.delete(`/stores/${store._id}`);
-                                                fetchStores();
+                                        <button className="action-btn delete" title="Delete Store" onClick={async () => {
+                                            if (window.confirm("Are you sure you want to delete this store?")) {
+                                                try {
+                                                    await axios.delete(`/stores/${store._id}`);
+                                                    fetchStores();
+                                                } catch (err) { setError('Failed to delete store'); }
                                             }
                                         }}>
                                             <Trash2 size={16} />
@@ -113,23 +117,23 @@ const Stores = () => {
 
             {isModalOpen && (
                 <div className="modal-overlay">
-                    <div className="modal-content glass-card scale-in-center">
+                    <div className="modal-content scale-in">
                         <div className="modal-header">
                             <h2>Add New Store</h2>
-                            <button onClick={() => setIsModalOpen(false)}><X size={24} /></button>
+                            <button className="close-btn" onClick={() => setIsModalOpen(false)}><X size={24} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
-                                <label>Store Name</label>
+                                <label className="form-label">Store Name</label>
                                 <input type="text" className="input-glass" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required placeholder="e.g. Colombo Central" />
                             </div>
                             <div className="form-group">
-                                <label>Location</label>
+                                <label className="form-label">Location</label>
                                 <input type="text" className="input-glass" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} required placeholder="e.g. No 123, Galle Road" />
                             </div>
                             <div className="modal-actions">
                                 <button type="button" className="btn-secondary w-full" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary w-full">Create Store</button>
+                                <button type="submit" className="btn-primary w-full" style={{ justifyContent: 'center' }}>Create Store</button>
                             </div>
                         </form>
                     </div>

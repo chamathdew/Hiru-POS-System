@@ -10,12 +10,15 @@ const Dashboard = () => {
     ];
 
     return (
-        <div className="dashboard-container">
-            <header className="dashboard-header">
-                <h1 className="page-title">Dashboard</h1>
+        <div className="page-container fade-in">
+            <header className="page-header">
+                <div>
+                    <h1 className="page-title">Analytics Overview</h1>
+                    <p className="page-subtitle">Real-time performance metrics</p>
+                </div>
                 <div className="user-profile">
-                    <span className="user-name">Welcome, Admin</span>
-                    <div className="user-avatar">A</div>
+                    <span className="hidden-mobile" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Welcome, Admin</span>
+                    <div className="user-avatar">AD</div>
                 </div>
             </header>
 
@@ -23,7 +26,7 @@ const Dashboard = () => {
                 {stats.map((stat, index) => {
                     const Icon = stat.icon;
                     return (
-                        <div key={index} className="stat-card glass-card">
+                        <div key={index} className="stat-card glass-panel-hover">
                             <div className={`stat-icon-wrapper ${stat.color}`}>
                                 <Icon size={24} />
                             </div>
@@ -36,28 +39,31 @@ const Dashboard = () => {
                 })}
             </div>
 
-            <div className="recent-activity glass-card">
-                <h2 className="section-title">Recent Activity</h2>
+            <div className="recent-activity">
+                <h2 className="section-title">
+                    <Package size={20} className="text-orange" />
+                    Recent System Logs
+                </h2>
                 <ul className="activity-list">
                     <li className="activity-item">
                         <span className="activity-dot orange"></span>
                         <div className="activity-content">
-                            <p className="activity-text">New order received from <strong>Store A</strong></p>
-                            <span className="activity-time">2 mins ago</span>
+                            <p className="activity-text">Inventory Stock-In: <strong>New items received at Colombo Store</strong></p>
+                            <span className="activity-time">Just Now</span>
                         </div>
                     </li>
                     <li className="activity-item">
                         <span className="activity-dot blue"></span>
                         <div className="activity-content">
-                            <p className="activity-text">Stock updated for <strong>Item XYZ</strong></p>
-                            <span className="activity-time">1 hour ago</span>
+                            <p className="activity-text">Supplies: <strong>Updated pricing for 'Item Batch #401'</strong></p>
+                            <span className="activity-time">24 minutes ago</span>
                         </div>
                     </li>
                     <li className="activity-item">
                         <span className="activity-dot green"></span>
                         <div className="activity-content">
-                            <p className="activity-text">New user registered</p>
-                            <span className="activity-time">3 hours ago</span>
+                            <p className="activity-text">Department Transfer: <strong>Hardware items moved to Storage</strong></p>
+                            <span className="activity-time">2 hours ago</span>
                         </div>
                     </li>
                 </ul>
