@@ -1,0 +1,128 @@
+/* Dark Mode Common Utilities */
+.page-container {
+    animation: fadeInPage 0.5s ease-out;
+}
+
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-alert {
+    background: rgba(245, 101, 101, 0.1);
+    color: #f56565;
+    padding: 1.2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(245, 101, 101, 0.2);
+    margin-bottom: 2rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.loading-state {
+    padding: 6rem;
+    text-align: center;
+    color: #718096;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.page-subtitle {
+    color: #a0aec0;
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+}
+
+/* Modal Animations (Full Dark Overlay) */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 600px;
+    padding: 3rem;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #cbd5e0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+}
+
+.modal-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.6rem;
+}
+
+/* Utility classes */
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}

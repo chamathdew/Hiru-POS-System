@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-orange: #FF8C00;
+  --secondary-orange: #FFA500;
+  --accent-orange: #FFD700;
+
+  --bg-dark: #0b0d11;
+  --bg-card: rgba(26, 29, 36, 0.8);
+  --text-main: #ffffff;
+  --text-dim: #a0aec0;
+
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-dark);
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(255, 140, 0, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(255, 165, 0, 0.05) 0%, transparent 40%);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-orange);
+}
+
+/* Layout Fix: 300px spacing for Sidebar */
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-dark);
+}
+
+.main-content {
+  flex: 1;
+  padding: 3rem;
+  margin-left: 310px;
+  /* Safe space for sidebar */
+  width: calc(100% - 310px);
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* Typography Overrides */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+td,
+p,
+span,
+div,
+label {
+  color: inherit;
+  /* Ensure they use body color or white */
+}
+
+.page-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: white !important;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: var(--text-dim) !important;
+}
+
+/* Premium Card (Glassmorphism) */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Table Enhancements */
+.table-container {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+}
+
+th {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.2rem 1.5rem;
+  color: var(--primary-orange);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+td {
+  padding: 1.2rem 1.5rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-orange) 10%, var(--secondary-orange) 100%);
+  color: white !important;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.25);
+}
