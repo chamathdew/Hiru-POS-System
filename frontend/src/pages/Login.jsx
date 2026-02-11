@@ -1,55 +1,51 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LogIn } from 'lucide-react';
 import logo from '../assets/logo.png';
 import '../styles/Login.css';
 
 const Login = () => {
-    const navigate = useNavigate();
-    const { login } = useAuth();
-    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-
+        setError('');
         try {
-            const { success, message } = await login(email, password);
-            if (success) {
-                navigate('/dashboard');
-            } else {
-                setError(message);
-            }
+            await login(email, password);
         } catch (err) {
-            setError(err.message || 'An unexpected error occurred.');
+            setError(err.response?.data?.message || 'Authentication failed');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="login-screen">
-            <div className="login-auth-card fade-up">
-                <div className="login-top">
-                    <div className="login-logo-box">
-                        <img src={logo} alt="H" style={{ width: '24px' }} />
+        <div className="login-vibrant-screen">
+            <div className="login-glow-circle top-right"></div>
+            <div className="login-glow-circle bottom-left"></div>
+
+            <div className="glass-card login-vibrant-card fade-in">
+                <div className="login-vibrant-header">
+                    <div className="logo-vibrant-box">
+                        <img src={logo} alt="H" style={{ width: '32px' }} />
                     </div>
-                    <h2>Hiru POS System</h2>
-                    <p>Secure login for staff and admins</p>
+                    <h1>Hiru POS</h1>
+                    <p>Logistical Enterprise Solutions</p>
                 </div>
 
-                {error && <div className="alert-error">{error}</div>}
+                {error && <div className="vibrant-error-alert" style={{ padding: '1rem', marginBottom: '2rem' }}>{error}</div>}
 
-                <form onSubmit={handleLogin} className="login-form">
-                    <div className="field-group">
-                        <label className="field-label">Workspace Identity (Email)</label>
+                <form onSubmit={handleLogin} className="login-vibrant-form">
+                    <div className="vibrant-form-group">
+                        <label className="vibrant-label">Email Access</label>
                         <input
                             type="email"
-                            className="field-input"
+                            className="vibrant-input"
                             placeholder="admin@hiru.lk"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -57,11 +53,11 @@ const Login = () => {
                         />
                     </div>
 
-                    <div className="field-group">
-                        <label className="field-label">Access Passcode</label>
+                    <div className="vibrant-form-group" style={{ marginBottom: '2.5rem' }}>
+                        <label className="vibrant-label">Security Key</label>
                         <input
                             type="password"
-                            className="field-input"
+                            className="vibrant-input"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -69,21 +65,24 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" className="btn-primary login-action-btn" disabled={loading}>
-                        {loading ? 'Verifying Access...' : 'Authenticate'}
+                    <button type="submit" className="btn-primary w-full-vibrant" disabled={loading} style={{ justifyContent: 'center', fontSize: '1.1rem' }}>
+                        {loading ? 'Authenticating...' : (
+                            <>
+                                <LogIn size={20} /> Access System
+                            </>
+                        )}
                     </button>
 
-                    <div className="demo-hint">
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>INTERNAL DEMO ACCESS</p>
-                        <p style={{ fontSize: '0.85rem' }}>
-                            <code>admin@hiru.lk</code> / <code>Admin@123</code>
-                        </p>
+                    <div className="login-vibrant-hint">
+                        <p>Demo Credentials</p>
+                        <code>admin@hiru.lk  /  Admin@123</code>
                     </div>
                 </form>
             </div>
-            <p style={{ marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                Managed Enterprise POS Solutions by Hiru
-            </p>
+
+            <div className="login-footer-vibrant">
+                &copy; {new Date().getFullYear()} Hiru POS. All Rights Reserved.
+            </div>
         </div>
     );
 };

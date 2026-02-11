@@ -29,52 +29,56 @@ const Items = () => {
     };
 
     return (
-        <div className="fade-up">
-            <header className="page-header">
+        <div className="fade-in">
+            <header className="flex-between-vibrant" style={{ marginBottom: '3.5rem' }}>
                 <div>
-                    <h1 className="page-title">Inventory Items</h1>
-                    <p className="page-subtitle">Manage products, stock levels and categories</p>
+                    <h1 className="page-title">Inventory Analytics</h1>
+                    <p className="page-subtitle">Track products, supplies and raw material inventory</p>
                 </div>
                 <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-                    <Plus size={18} /> New Item
+                    <Plus size={22} /> Add New Product
                 </button>
             </header>
 
-            {error && <div className="alert-error">{error}</div>}
+            {error && <div className="vibrant-error-alert">{error}</div>}
 
-            {loading ? <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-dim)' }}>Loading items...</div> : (
-                <div className="table-wrapper">
-                    <table className="modern-table">
+            {loading ? (
+                <div className="glass-card fade-in" style={{ padding: '6rem', textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.2rem', color: 'var(--text-dim)' }}>Syncing warehouse data...</div>
+                </div>
+            ) : (
+                <div className="glass-card glass-table-container fade-in">
+                    <table className="premium-table">
                         <thead>
                             <tr>
                                 <th>Item Code</th>
-                                <th>Name</th>
+                                <th>Product Name</th>
                                 <th>Category</th>
-                                <th>Unit</th>
+                                <th>Unit Scale</th>
                                 <th style={{ textAlign: 'right' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {items.map(item => (
                                 <tr key={item._id}>
-                                    <td><span className="id-tag">{item.code}</span></td>
-                                    <td style={{ fontWeight: 500 }}>{item.name}</td>
+                                    <td className="code-accent">{item.code}</td>
+                                    <td style={{ fontWeight: 600, color: 'white' }}>{item.name}</td>
                                     <td>
-                                        <span className="badge-flat success" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>
+                                        <span style={{ fontSize: '0.85rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                                             {item.category}
                                         </span>
                                     </td>
                                     <td style={{ color: 'var(--text-dim)' }}>{item.unit.toUpperCase()}</td>
                                     <td style={{ textAlign: 'right' }}>
-                                        <button className="action-icon delete" title="Delete Item" onClick={async () => {
-                                            if (window.confirm("Permanent delete?")) {
+                                        <button className="glass-action-btn danger" title="Delete Item" onClick={async () => {
+                                            if (window.confirm("Remove this item from inventory?")) {
                                                 try {
                                                     await api.delete(`/items/${item._id}`);
                                                     fetchItems();
                                                 } catch (err) { setError('Failed to delete item'); }
                                             }
                                         }}>
-                                            <Trash2 size={16} />
+                                            <Trash2 size={18} />
                                         </button>
                                     </td>
                                 </tr>
@@ -85,23 +89,27 @@ const Items = () => {
             )}
 
             {isModalOpen && (
-                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setIsModalOpen(false)}>
-                    <div className="modal-sheet">
-                        <X className="close-cross" size={20} onClick={() => setIsModalOpen(false)} />
-                        <h2 className="modal-title">Add New Inventory Item</h2>
+                <div className="glass-modal-overlay">
+                    <div className="glass-card glass-modal-card">
+                        <div className="modal-vibrant-header">
+                            <h2>Add Inventory Item</h2>
+                            <button className="close-vibrant-btn" onClick={() => setIsModalOpen(false)}>
+                                <X size={28} />
+                            </button>
+                        </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="field-group">
-                                <label className="field-label">Item Name</label>
-                                <input type="text" className="field-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                            <div className="vibrant-form-group">
+                                <label className="vibrant-label">Product Name</label>
+                                <input type="text" className="vibrant-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div className="field-group">
-                                    <label className="field-label">Item Code</label>
-                                    <input type="text" className="field-input" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} placeholder="Auto-generated" />
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                <div className="vibrant-form-group">
+                                    <label className="vibrant-label">Custom Code</label>
+                                    <input type="text" className="vibrant-input" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} placeholder="Auto-gen" />
                                 </div>
-                                <div className="field-group">
-                                    <label className="field-label">Unit Type</label>
-                                    <select className="field-input" value={formData.unit} onChange={(e) => setFormData({ ...formData, unit: e.target.value })}>
+                                <div className="vibrant-form-group">
+                                    <label className="vibrant-label">Unit Scale</label>
+                                    <select className="vibrant-input" value={formData.unit} onChange={(e) => setFormData({ ...formData, unit: e.target.value })}>
                                         <option value="pcs">Pieces (pcs)</option>
                                         <option value="kg">Kilograms (kg)</option>
                                         <option value="l">Liters (l)</option>
@@ -109,13 +117,13 @@ const Items = () => {
                                     </select>
                                 </div>
                             </div>
-                            <div className="field-group">
-                                <label className="field-label">Category</label>
-                                <input type="text" className="field-input" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Hardware" />
+                            <div className="vibrant-form-group">
+                                <label className="vibrant-label">Category</label>
+                                <input type="text" className="vibrant-input" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Raw Materials" />
                             </div>
-                            <div className="modal-btns">
-                                <button type="button" className="btn-secondary full-width" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary full-width" style={{ justifyContent: 'center' }}>Save Entry</button>
+                            <div className="vibrant-modal-actions">
+                                <button type="button" className="btn-secondary w-full-vibrant" style={{ justifyContent: 'center' }} onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn-primary w-full-vibrant" style={{ justifyContent: 'center' }}>Save Product</button>
                             </div>
                         </form>
                     </div>
