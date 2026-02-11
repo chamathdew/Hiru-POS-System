@@ -32,24 +32,24 @@ const Login = () => {
     };
 
     return (
-        <div className="login-page">
-            <div className="login-card fade-in">
-                <div className="login-header">
-                    <div className="login-logo">
-                        <img src={logo} alt="H" style={{ width: '32px' }} />
+        <div className="login-screen">
+            <div className="login-auth-card fade-up">
+                <div className="login-top">
+                    <div className="login-logo-box">
+                        <img src={logo} alt="H" style={{ width: '24px' }} />
                     </div>
-                    <h1>Hiru POS</h1>
-                    <p>Welcome back! Please login.</p>
+                    <h2>Hiru POS System</h2>
+                    <p>Secure login for staff and admins</p>
                 </div>
 
-                {error && <div className="error-alert">{error}</div>}
+                {error && <div className="alert-error">{error}</div>}
 
                 <form onSubmit={handleLogin} className="login-form">
-                    <div className="form-group">
-                        <label className="form-label">Email Address</label>
+                    <div className="field-group">
+                        <label className="field-label">Workspace Identity (Email)</label>
                         <input
                             type="email"
-                            className="input-glass"
+                            className="field-input"
                             placeholder="admin@hiru.lk"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -57,11 +57,11 @@ const Login = () => {
                         />
                     </div>
 
-                    <div className="form-group" style={{ marginBottom: '1rem' }}>
-                        <label className="form-label">Password</label>
+                    <div className="field-group">
+                        <label className="field-label">Access Passcode</label>
                         <input
                             type="password"
-                            className="input-glass"
+                            className="field-input"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -69,21 +69,21 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" className="btn-primary login-btn" disabled={loading}>
-                        {loading ? 'Authenticating...' : 'Sign In'}
+                    <button type="submit" className="btn-primary login-action-btn" disabled={loading}>
+                        {loading ? 'Verifying Access...' : 'Authenticate'}
                     </button>
 
-                    <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
-                            Demo: <b>admin@hiru.lk</b> / <b>Admin@123</b>
+                    <div className="demo-hint">
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>INTERNAL DEMO ACCESS</p>
+                        <p style={{ fontSize: '0.85rem' }}>
+                            <code>admin@hiru.lk</code> / <code>Admin@123</code>
                         </p>
                     </div>
-
-                    <p className="login-footer">
-                        Forgot your password? <span style={{ color: 'var(--primary-orange)', cursor: 'pointer' }}>Contact System Admin</span>
-                    </p>
                 </form>
             </div>
+            <p style={{ marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+                Managed Enterprise POS Solutions by Hiru
+            </p>
         </div>
     );
 };

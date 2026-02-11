@@ -1,90 +1,65 @@
-.login-page {
+.login-screen {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--bg-deep);
-    position: relative;
-    padding: 1.5rem;
+    background: #000;
 }
 
-.login-page::before {
-    content: '';
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, hsla(28, 100%, 50%, 0.15) 0%, transparent 70%);
-    top: -200px;
-    right: -200px;
-    pointer-events: none;
-}
-
-.login-page::after {
-    content: '';
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, hsla(222, 100%, 50%, 0.1) 0%, transparent 70%);
-    bottom: -150px;
-    left: -150px;
-    pointer-events: none;
-}
-
-.login-card {
+.login-auth-card {
     width: 100%;
-    max-width: 440px;
-    background: hsla(222, 47%, 10%, 0.4);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid var(--glass-border-bright);
-    border-radius: 32px;
-    padding: 3.5rem;
-    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
-    z-index: 10;
+    max-width: 400px;
+    background: #09090b;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
 }
 
-.login-header {
+.login-top {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
-.login-logo {
-    width: 64px;
-    height: 64px;
-    background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
-    border-radius: 18px;
+.login-logo-box {
+    width: 48px;
+    height: 48px;
+    background: var(--primary);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
-    box-shadow: 0 10px 25px var(--primary-glow);
+    margin: 0 auto 1.25rem;
 }
 
-.login-header h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+.login-top h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
 }
 
-.login-header p {
-    color: var(--text-secondary);
+.login-top p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
 }
 
-.login-form .form-group {
-    margin-bottom: 1.8rem;
-}
-
-.login-btn {
+.login-action-btn {
     width: 100%;
-    padding: 1.1rem;
-    border-radius: 14px;
-    font-size: 1.1rem;
-    justify-content: center;
+    padding: 0.75rem;
+    font-size: 1rem;
     margin-top: 1rem;
 }
 
-.login-footer {
-    text-align: center;
+.demo-hint {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--border-subtle);
+    padding: 1rem;
+    border-radius: var(--radius-md);
     margin-top: 2rem;
-    color: var(--text-tertiary);
-    font-size: 0.85rem;
+    text-align: center;
+}
+
+.demo-hint code {
+    color: var(--primary);
+    font-family: inherit;
+    font-weight: 600;
 }

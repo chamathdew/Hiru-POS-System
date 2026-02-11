@@ -10,63 +10,63 @@ const Dashboard = () => {
     ];
 
     return (
-        <div className="page-container fade-in">
+        <div className="fade-up">
             <header className="page-header">
                 <div>
-                    <h1 className="page-title">Analytics Overview</h1>
-                    <p className="page-subtitle">Real-time performance metrics</p>
+                    <h1 className="page-title">Overview</h1>
+                    <p className="page-subtitle">Real-time business performance snapshot</p>
                 </div>
-                <div className="user-profile">
-                    <span className="hidden-mobile" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Welcome, Admin</span>
-                    <div className="user-avatar">AD</div>
+                <div className="profile-chip">
+                    <span className="hide-on-mobile" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Administrator</span>
+                    <div className="profile-icon">AD</div>
                 </div>
             </header>
 
-            <div className="stats-grid">
+            <div className="metrics-grid">
                 {stats.map((stat, index) => {
                     const Icon = stat.icon;
                     return (
-                        <div key={index} className="stat-card glass-panel-hover">
-                            <div className={`stat-icon-wrapper ${stat.color}`}>
-                                <Icon size={24} />
+                        <div key={index} className="metric-card">
+                            <div className="metric-head">
+                                <div className={`metric-icon-box ${stat.color}`}>
+                                    <Icon size={18} />
+                                </div>
+                                <span className="metric-label">{stat.label}</span>
                             </div>
-                            <div className="stat-info">
-                                <h3 className="stat-label">{stat.label}</h3>
-                                <p className="stat-value">{stat.value}</p>
-                            </div>
+                            <p className="metric-value">{stat.value}</p>
                         </div>
                     );
                 })}
             </div>
 
-            <div className="recent-activity">
-                <h2 className="section-title">
-                    <Package size={20} className="text-orange" />
-                    Recent System Logs
+            <div className="activity-panel">
+                <h2 className="log-title">
+                    <Package size={18} />
+                    Live Activity Stream
                 </h2>
-                <ul className="activity-list">
-                    <li className="activity-item">
-                        <span className="activity-dot orange"></span>
-                        <div className="activity-content">
-                            <p className="activity-text">Inventory Stock-In: <strong>New items received at Colombo Store</strong></p>
-                            <span className="activity-time">Just Now</span>
+                <div className="log-list">
+                    <div className="log-item">
+                        <span className="log-dot orange"></span>
+                        <div className="log-info">
+                            <p className="log-text">New stock entry received at <strong>Colombo Branch</strong></p>
+                            <span className="log-time">Just Now</span>
                         </div>
-                    </li>
-                    <li className="activity-item">
-                        <span className="activity-dot blue"></span>
-                        <div className="activity-content">
-                            <p className="activity-text">Supplies: <strong>Updated pricing for 'Item Batch #401'</strong></p>
-                            <span className="activity-time">24 minutes ago</span>
+                    </div>
+                    <div className="log-item">
+                        <span className="log-dot blue"></span>
+                        <div className="log-info">
+                            <p className="log-text">Price adjustment made for <strong>Cement 50kg</strong></p>
+                            <span className="log-time">24 mins ago</span>
                         </div>
-                    </li>
-                    <li className="activity-item">
-                        <span className="activity-dot green"></span>
-                        <div className="activity-content">
-                            <p className="activity-text">Department Transfer: <strong>Hardware items moved to Storage</strong></p>
-                            <span className="activity-time">2 hours ago</span>
+                    </div>
+                    <div className="log-item">
+                        <span className="log-dot green"></span>
+                        <div className="log-info">
+                            <p className="log-text">Inventory transfer: <strong>Department A to Main Store</strong></p>
+                            <span className="log-time">2 hours ago</span>
                         </div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     );

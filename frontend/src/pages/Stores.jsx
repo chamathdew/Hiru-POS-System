@@ -54,51 +54,51 @@ const Stores = () => {
     };
 
     return (
-        <div className="page-container fade-in">
-            <div className="page-header">
+        <div className="fade-up">
+            <header className="page-header">
                 <div>
-                    <h1 className="page-title">Stores Management</h1>
-                    <p className="page-subtitle">Manage all physical store locations</p>
+                    <h1 className="page-title">Stores</h1>
+                    <p className="page-subtitle">Manage branch locations and inventory centers</p>
                 </div>
-                <div className="flex gap-2 mb-2">
-                    <button className="btn-secondary" onClick={handleExportPDF} title="Export PDF">
-                        <FileText size={18} /> <span className="hidden-mobile">PDF</span>
+                <div className="flex-row-center gap-medium">
+                    <button className="btn-secondary" onClick={handleExportPDF} title="Download PDF Report">
+                        <FileText size={16} /> <span className="hide-on-mobile">Export PDF</span>
                     </button>
-                    <button className="btn-secondary" onClick={handleExportExcel} title="Export Excel">
-                        <FileSpreadsheet size={18} /> <span className="hidden-mobile">Excel</span>
+                    <button className="btn-secondary" onClick={handleExportExcel} title="Download Excel Sheet">
+                        <FileSpreadsheet size={16} /> <span className="hide-on-mobile">Excel Sheet</span>
                     </button>
                     <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-                        <Plus size={20} /> Add New Store
+                        <Plus size={18} /> New Store
                     </button>
                 </div>
-            </div>
+            </header>
 
-            {error && <div className="error-alert">{error}</div>}
+            {error && <div className="alert-error">{error}</div>}
 
-            {loading ? <div className="loading-state">Loading stores...</div> : (
-                <div className="table-container fade-in">
-                    <table className="custom-table">
+            {loading ? <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-dim)' }}>Loading store data...</div> : (
+                <div className="table-wrapper">
+                    <table className="modern-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Store Name</th>
-                                <th>Location</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+                                <th>Code</th>
+                                <th>Branch Name</th>
+                                <th>Full Location</th>
+                                <th>Date Added</th>
+                                <th style={{ textAlign: 'right' }}>Management</th>
                             </tr>
                         </thead>
                         <tbody>
                             {stores.map(store => (
                                 <tr key={store._id}>
-                                    <td className="id-cell">{store.code}</td>
-                                    <td style={{ fontWeight: 600 }}>{store.name}</td>
-                                    <td style={{ color: 'var(--text-secondary)' }}>{store.location}</td>
-                                    <td style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
+                                    <td><span className="id-tag">{store.code}</span></td>
+                                    <td style={{ fontWeight: 500 }}>{store.name}</td>
+                                    <td style={{ color: 'var(--text-muted)' }}>{store.location}</td>
+                                    <td style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>
                                         {new Date(store.createdAt).toLocaleDateString()}
                                     </td>
-                                    <td>
-                                        <button className="action-btn delete" title="Delete Store" onClick={async () => {
-                                            if (window.confirm("Are you sure you want to delete this store?")) {
+                                    <td style={{ textAlign: 'right' }}>
+                                        <button className="action-icon delete" title="Remove Branch" onClick={async () => {
+                                            if (window.confirm("Delete this store? This cannot be undone.")) {
                                                 try {
                                                     await axios.delete(`/stores/${store._id}`);
                                                     fetchStores();
@@ -116,24 +116,22 @@ const Stores = () => {
             )}
 
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content scale-in">
-                        <div className="modal-header">
-                            <h2>Add New Store</h2>
-                            <button className="close-btn" onClick={() => setIsModalOpen(false)}><X size={24} /></button>
-                        </div>
+                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setIsModalOpen(false)}>
+                    <div className="modal-sheet">
+                        <X className="close-cross" size={20} onClick={() => setIsModalOpen(false)} />
+                        <h2 className="modal-title">Register New Store</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label className="form-label">Store Name</label>
-                                <input type="text" className="input-glass" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required placeholder="e.g. Colombo Central" />
+                            <div className="field-group">
+                                <label className="field-label">Store Name</label>
+                                <input type="text" className="field-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required placeholder="e.g. Main Hub" />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Location</label>
-                                <input type="text" className="input-glass" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} required placeholder="e.g. No 123, Galle Road" />
+                            <div className="field-group">
+                                <label className="field-label">Location Address</label>
+                                <input type="text" className="field-input" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} required placeholder="No. 45, Highlevel Road..." />
                             </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn-secondary w-full" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary w-full" style={{ justifyContent: 'center' }}>Create Store</button>
+                            <div className="modal-btns">
+                                <button type="button" className="btn-secondary full-width" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn-primary full-width" style={{ justifyContent: 'center' }}>Create Hub</button>
                             </div>
                         </form>
                     </div>

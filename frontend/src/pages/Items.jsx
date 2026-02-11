@@ -29,45 +29,45 @@ const Items = () => {
     };
 
     return (
-        <div className="page-container fade-in">
+        <div className="fade-up">
             <header className="page-header">
                 <div>
-                    <h1 className="page-title">Items Inventory</h1>
-                    <p className="page-subtitle">Manage products and stock items</p>
+                    <h1 className="page-title">Inventory Items</h1>
+                    <p className="page-subtitle">Manage products, stock levels and categories</p>
                 </div>
                 <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
-                    <Plus size={20} /> Add Item
+                    <Plus size={18} /> New Item
                 </button>
             </header>
 
-            {error && <div className="error-alert">{error}</div>}
+            {error && <div className="alert-error">{error}</div>}
 
-            {loading ? <div className="loading-state">Loading inventory...</div> : (
-                <div className="table-container fade-in">
-                    <table className="custom-table">
+            {loading ? <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-dim)' }}>Loading items...</div> : (
+                <div className="table-wrapper">
+                    <table className="modern-table">
                         <thead>
                             <tr>
-                                <th>ID / Code</th>
-                                <th>Item Name</th>
+                                <th>Item Code</th>
+                                <th>Name</th>
                                 <th>Category</th>
                                 <th>Unit</th>
-                                <th>Actions</th>
+                                <th style={{ textAlign: 'right' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {items.map(item => (
                                 <tr key={item._id}>
-                                    <td className="id-cell">{item.code}</td>
-                                    <td style={{ fontWeight: 600 }}>{item.name}</td>
+                                    <td><span className="id-tag">{item.code}</span></td>
+                                    <td style={{ fontWeight: 500 }}>{item.name}</td>
                                     <td>
-                                        <span className="status-badge active" style={{ fontSize: '0.7rem' }}>
+                                        <span className="badge-flat success" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>
                                             {item.category}
                                         </span>
                                     </td>
-                                    <td style={{ color: 'var(--text-secondary)' }}>{item.unit.toUpperCase()}</td>
-                                    <td>
-                                        <button className="action-btn delete" title="Delete Item" onClick={async () => {
-                                            if (window.confirm("Delete this item?")) {
+                                    <td style={{ color: 'var(--text-dim)' }}>{item.unit.toUpperCase()}</td>
+                                    <td style={{ textAlign: 'right' }}>
+                                        <button className="action-icon delete" title="Delete Item" onClick={async () => {
+                                            if (window.confirm("Permanent delete?")) {
                                                 try {
                                                     await api.delete(`/items/${item._id}`);
                                                     fetchItems();
@@ -85,25 +85,23 @@ const Items = () => {
             )}
 
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content scale-in">
-                        <div className="modal-header">
-                            <h2>New Inventory Item</h2>
-                            <button className="close-btn" onClick={() => setIsModalOpen(false)}><X size={24} /></button>
-                        </div>
+                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setIsModalOpen(false)}>
+                    <div className="modal-sheet">
+                        <X className="close-cross" size={20} onClick={() => setIsModalOpen(false)} />
+                        <h2 className="modal-title">Add New Inventory Item</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label className="form-label">Item Name</label>
-                                <input type="text" className="input-glass" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                            <div className="field-group">
+                                <label className="field-label">Item Name</label>
+                                <input type="text" className="field-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                <div className="form-group">
-                                    <label className="form-label">Custom Code</label>
-                                    <input type="text" className="input-glass" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} placeholder="Auto-generated" />
+                                <div className="field-group">
+                                    <label className="field-label">Item Code</label>
+                                    <input type="text" className="field-input" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} placeholder="Auto-generated" />
                                 </div>
-                                <div className="form-group">
-                                    <label className="form-label">Unit</label>
-                                    <select className="input-glass" value={formData.unit} onChange={(e) => setFormData({ ...formData, unit: e.target.value })}>
+                                <div className="field-group">
+                                    <label className="field-label">Unit Type</label>
+                                    <select className="field-input" value={formData.unit} onChange={(e) => setFormData({ ...formData, unit: e.target.value })}>
                                         <option value="pcs">Pieces (pcs)</option>
                                         <option value="kg">Kilograms (kg)</option>
                                         <option value="l">Liters (l)</option>
@@ -111,13 +109,13 @@ const Items = () => {
                                     </select>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Category</label>
-                                <input type="text" className="input-glass" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Raw Materials" />
+                            <div className="field-group">
+                                <label className="field-label">Category</label>
+                                <input type="text" className="field-input" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Hardware" />
                             </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn-secondary w-full" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary w-full" style={{ justifyContent: 'center' }}>Save Item</button>
+                            <div className="modal-btns">
+                                <button type="button" className="btn-secondary full-width" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn-primary full-width" style={{ justifyContent: 'center' }}>Save Entry</button>
                             </div>
                         </form>
                     </div>
