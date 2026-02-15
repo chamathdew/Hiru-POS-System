@@ -1,12 +1,40 @@
+import { useState, useEffect } from 'react';
+import api from '../services/api';
 import { Store, Package, Users, ShoppingCart } from 'lucide-react';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
+    const [counts, setCounts] = useState({ stores: 0, items: 0, suppliers: 0, sales: '2.5k' });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            try {
+                const [storesRes, itemsRes, suppliersRes] = await Promise.all([
+                    api.get('/stores'),
+                    api.get('/items'),
+                    api.get('/suppliers')
+                ]);
+                setCounts({
+                    stores: storesRes.data.stores?.length || 0,
+                    items: itemsRes.data.items?.length || 0,
+                    suppliers: suppliersRes.data.suppliers?.length || 0,
+                    sales: '2.8k' // Hardcoded for now as no sales API seen
+                });
+            } catch (err) {
+                console.error("Failed to fetch dashboard stats", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCounts();
+    }, []);
+
     const stats = [
-        { label: 'Total Stores', value: '12', icon: Store, color: 'orange' },
-        { label: 'Active Items', value: '850', icon: Package, color: 'blue' },
-        { label: 'Suppliers', value: '45', icon: Users, color: 'green' },
-        { label: 'Sales Orders', value: '2.5k', icon: ShoppingCart, color: 'red' },
+        { label: 'Total Stores', value: counts.stores, icon: Store, color: 'orange' },
+        { label: 'Active Items', value: counts.items, icon: Package, color: 'blue' },
+        { label: 'Suppliers', value: counts.suppliers, icon: Users, color: 'green' },
+        { label: 'Sales Orders', value: counts.sales, icon: ShoppingCart, color: 'red' },
     ];
 
     return (

@@ -25,11 +25,22 @@ async function departmentConsumption({ storeId, departmentId, from, to }) {
         qty: { $sum: "$qty" },
         value: { $sum: "$lineTotal" }
       }
-    }
+    },
+    {
+      $lookup: {
+        from: "items",
+        localField: "_id.itemId",
+        foreignField: "_id",
+        as: "item"
+      }
+    },
+    { $unwind: "$item" }
   ]);
 
   return rows.map(r => ({
     itemId: String(r._id.itemId),
+    itemName: r.item.name,
+    itemCode: r.item.code,
     grnNo: r._id.grnNo,
     qty: r.qty,
     value: r.value
@@ -45,7 +56,7 @@ router.get("/department-consumption", requireAuth, enforceStoreScope, async (req
 });
 
 // CSV download (accounts allowed)
-router.get("/department-consumption.csv", requireAuth, requireRole("ADMIN","STORE_KEEPER","ACCOUNTS_VIEW"), enforceStoreScope, async (req, res) => {
+router.get("/department-consumption.csv", requireAuth, requireRole("ADMIN", "STORE_KEEPER", "ACCOUNTS_VIEW"), enforceStoreScope, async (req, res) => {
   const { storeId, departmentId, from, to } = req.query;
   if (!storeId) return res.status(400).json({ message: "storeId required" });
 
@@ -60,7 +71,7 @@ router.get("/department-consumption.csv", requireAuth, requireRole("ADMIN","STOR
 });
 
 // PDF download (simple)
-router.get("/department-consumption.pdf", requireAuth, requireRole("ADMIN","STORE_KEEPER","ACCOUNTS_VIEW"), enforceStoreScope, async (req, res) => {
+router.get("/department-consumption.pdf", requireAuth, requireRole("ADMIN", "STORE_KEEPER", "ACCOUNTS_VIEW"), enforceStoreScope, async (req, res) => {
   const { storeId, departmentId, from, to } = req.query;
   if (!storeId) return res.status(400).json({ message: "storeId required" });
 

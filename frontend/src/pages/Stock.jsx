@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { BarChart3, Search, TrendingDown, Package, Database } from 'lucide-react';
 
 const Stock = () => {
+    const { user } = useAuth();
     const [stock, setStock] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,9 +14,13 @@ const Stock = () => {
 
     const fetchStock = async () => {
         try {
-            const response = await api.get('/stock');
+            const params = user?.storeId ? { storeId: user.storeId } : {};
+            const response = await api.get('/stock', { params });
             setStock(response.data.stock || []);
-        } catch (err) { setError('Failed to fetch stock data'); } finally { setLoading(false); }
+        } catch (err) {
+            console.error(err);
+            setError('Failed to fetch stock data');
+        } finally { setLoading(false); }
     };
 
     const filteredStock = stock.filter(s =>
@@ -30,39 +36,45 @@ const Stock = () => {
 
     return (
         <div className="page-container fade-in">
-            <div className="flex-between mb-8">
+            <header className="flex-between-vibrant mb-8">
                 <div>
-                    <h1 className="page-title">Inventory & Stock Levels</h1>
-                    <p className="page-subtitle">Real-time monitoring across all stores</p>
+                    <h1 className="page-title">Inventory Intelligence</h1>
+                    <p className="page-subtitle">Real-time stock monitoring across all enterprise stores</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-dim" size={18} />
-                        <input type="text" className="input-glass pl-10 w-64" placeholder="Search items or stores..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400/50" size={20} />
+                        <input
+                            type="text"
+                            className="vibrant-input pl-12 w-80"
+                            placeholder="Search SKU or Store..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <div className="stats-grid grid-cols-3 mb-8">
-                <div className="stat-card glass-card">
-                    <div className="stat-icon-wrapper orange"><Package size={24} /></div>
-                    <div className="stat-info">
-                        <span className="stat-label">Total Unique Items</span>
-                        <span className="stat-value">{new Set(stock.map(s => s.itemId?._id)).size}</span>
+            <div className="vibrant-metrics">
+                <div className="glass-card stat-vibrant-card">
+                    <div className="icon-box-vibrant orange"><Package size={28} /></div>
+                    <div>
+                        <h3 className="stat-label-vibrant">Total Unique Items</h3>
+                        <p className="stat-value-vibrant">{new Set(stock.map(s => s.itemId?._id)).size}</p>
                     </div>
                 </div>
-                <div className="stat-card glass-card">
-                    <div className="stat-icon-wrapper blue"><Database size={24} /></div>
-                    <div className="stat-info">
-                        <span className="stat-label">Total Qty on Hand</span>
-                        <span className="stat-value">{stock.reduce((acc, s) => acc + s.qty, 0).toLocaleString()}</span>
+                <div className="glass-card stat-vibrant-card">
+                    <div className="icon-box-vibrant blue"><Database size={28} /></div>
+                    <div>
+                        <h3 className="stat-label-vibrant">Total Qty on Hand</h3>
+                        <p className="stat-value-vibrant">{stock.reduce((acc, s) => acc + s.qty, 0).toLocaleString()}</p>
                     </div>
                 </div>
-                <div className="stat-card glass-card">
-                    <div className="stat-icon-wrapper red"><TrendingDown size={24} /></div>
-                    <div className="stat-info">
-                        <span className="stat-label">Low Stock Alerts</span>
-                        <span className="stat-value">{stock.filter(s => s.qty < 10).length}</span>
+                <div className="glass-card stat-vibrant-card">
+                    <div className="icon-box-vibrant red"><TrendingDown size={28} /></div>
+                    <div>
+                        <h3 className="stat-label-vibrant">Low Stock Alerts</h3>
+                        <p className="stat-value-vibrant">{stock.filter(s => s.qty < 10).length}</p>
                     </div>
                 </div>
             </div>
@@ -86,7 +98,7 @@ const Stock = () => {
                             {filteredStock.map(s => (
                                 <tr key={s._id}>
                                     <td className="font-mono text-xs text-orange-400">{s.itemId?.code || '-'}</td>
-                                    <td className="font-bold text-white">{s.itemId?.name || 'Unknown Item'}</td>
+                                    <td className="font-semibold">{s.itemId?.name || 'Unknown Item'}</td>
                                     <td className="text-dim">{s.storeId?.name || 'General Store'}</td>
                                     <td className="font-bold text-xl">{s.qty.toLocaleString()}</td>
                                     <td>{getStatusBadge(s.qty)}</td>

@@ -34,11 +34,8 @@ const Sidebar = () => {
 
     return (
         <aside className="sidebar">
-            <div className="sidebar-logo">
-                <div className="logo-icon">
-                    <img src={logo} alt="H" style={{ width: '22px' }} />
-                </div>
-                <span>Hiru POS</span>
+            <div className="sidebar-logo-container">
+                <img src={logo} alt="Hiru POS" className="sidebar-main-logo" />
             </div>
 
             <nav className="sidebar-nav">
@@ -50,18 +47,18 @@ const Sidebar = () => {
                         <Link
                             key={item.path}
                             to={item.path}
-                            className={`nav-item ${isActive ? 'active' : ''}`}
+                            className={`nav-link ${isActive ? 'active' : ''}`}
                         >
-                            <Icon size={20} className="nav-icon" />
-                            <span className="nav-label">{item.label}</span>
+                            <Icon size={24} />
+                            <span>{item.label}</span>
                         </Link>
                     );
                 })}
             </nav>
 
-            <div className="sidebar-footer">
-                <button className="logout-btn" onClick={logout}>
-                    <LogOut size={20} />
+            <div className="sidebar-bottom">
+                <button className="logout-action" onClick={logout}>
+                    <LogOut size={22} />
                     <span>Logout</span>
                 </button>
             </div>

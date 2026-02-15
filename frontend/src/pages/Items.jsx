@@ -47,8 +47,8 @@ const Items = () => {
                     <div style={{ fontSize: '1.2rem', color: 'var(--text-dim)' }}>Syncing warehouse data...</div>
                 </div>
             ) : (
-                <div className="glass-card glass-table-container fade-in">
-                    <table className="premium-table">
+                <div className="glass-card table-container fade-in">
+                    <table className="custom-table">
                         <thead>
                             <tr>
                                 <th>Item Code</th>
@@ -61,16 +61,16 @@ const Items = () => {
                         <tbody>
                             {items.map(item => (
                                 <tr key={item._id}>
-                                    <td className="code-accent">{item.code}</td>
+                                    <td className="text-orange-vibrant font-bold">{item.code}</td>
                                     <td style={{ fontWeight: 600, color: 'white' }}>{item.name}</td>
                                     <td>
-                                        <span style={{ fontSize: '0.85rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                        <span className="status-badge" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
                                             {item.category}
                                         </span>
                                     </td>
                                     <td style={{ color: 'var(--text-dim)' }}>{item.unit.toUpperCase()}</td>
                                     <td style={{ textAlign: 'right' }}>
-                                        <button className="glass-action-btn danger" title="Delete Item" onClick={async () => {
+                                        <button className="action-btn delete" title="Delete Item" onClick={async () => {
                                             if (window.confirm("Remove this item from inventory?")) {
                                                 try {
                                                     await api.delete(`/items/${item._id}`);

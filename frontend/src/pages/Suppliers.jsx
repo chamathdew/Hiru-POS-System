@@ -81,28 +81,28 @@ const Suppliers = () => {
             )}
 
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content glass-card scale-in-center">
-                        <div className="modal-header">
+                <div className="glass-modal-overlay">
+                    <div className="glass-card glass-modal-card scale-in-center">
+                        <div className="modal-vibrant-header">
                             <h2>New Supplier</h2>
-                            <button onClick={() => setIsModalOpen(false)}><X size={24} /></button>
+                            <button className="close-vibrant-btn" onClick={() => setIsModalOpen(false)}><X size={24} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Supplier Name</label>
-                                <input type="text" className="input-glass" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                            <div className="vibrant-form-group">
+                                <label className="vibrant-label">Supplier Name</label>
+                                <input type="text" className="vibrant-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
                             </div>
-                            <div className="form-group">
-                                <label>Contact Number / Email</label>
-                                <input type="text" className="input-glass" value={formData.contact} onChange={(e) => setFormData({ ...formData, contact: e.target.value })} required />
+                            <div className="vibrant-form-group">
+                                <label className="vibrant-label">Contact Number / Email</label>
+                                <input type="text" className="vibrant-input" value={formData.contact} onChange={(e) => setFormData({ ...formData, contact: e.target.value })} required />
                             </div>
-                            <div className="form-group">
-                                <label>Address</label>
-                                <textarea className="input-glass" rows="2" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })}></textarea>
+                            <div className="vibrant-form-group">
+                                <label className="vibrant-label">Address</label>
+                                <textarea className="vibrant-input" rows="2" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })}></textarea>
                             </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn-secondary w-full" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary w-full">Add Supplier</button>
+                            <div className="vibrant-modal-actions mt-10">
+                                <button type="button" className="btn-secondary flex-1" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn-primary flex-1" style={{ justifyContent: 'center' }}>Add Supplier</button>
                             </div>
                         </form>
                     </div>

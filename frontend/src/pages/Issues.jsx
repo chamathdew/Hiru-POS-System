@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { Plus, X, PackageCheck, AlertCircle } from 'lucide-react';
 
 const Issues = () => {
+    const { user } = useAuth();
     const [issues, setIssues] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,47 +23,114 @@ const Issues = () => {
 
     const fetchData = async () => {
         try {
+            const params = user?.storeId ? { storeId: user.storeId } : {};
             const [issueRes, reqRes] = await Promise.all([
-                api.get('/issues'),
-                api.get('/requests')
+                api.get('/issues', { params }),
+                api.get('/requests', { params })
             ]);
             setIssues(issueRes.data.issues || []);
-            // Only show pending requests that can be issued
-            setRequests(reqRes.data.requests?.filter(r => r.status === 'PENDING') || []);
-        } catch (err) { setError('Failed to fetch data'); } finally { setLoading(false); }
+            // Only show APPROVED or PARTIALLY_ISSUED requests that can be issued
+            setRequests(reqRes.data.requests?.filter(r =>
+                ['APPROVED', 'PARTIALLY_ISSUED'].includes(r.status)
+            ) || []);
+        } catch (err) {
+            console.error(err);
+            setError('Failed to fetch data');
+        } finally { setLoading(false); }
     };
 
     const handleRequestChange = async (requestId) => {
+        if (!requestId) {
+            setSelectedRequest(null);
+            setFormData({ ...formData, requestId: '', lines: [] });
+            return;
+        }
+
         const req = requests.find(r => r._id === requestId);
         setSelectedRequest(req);
-        if (req) {
+
+        try {
+            // Fetch detailed request with lines
+            const detailRes = await api.get(`/requests/${requestId}`);
+            const detailLines = detailRes.data.lines || [];
+
+            // For each item, fetch available stock lots
+            const linesWithLots = await Promise.all(detailLines.map(async (l) => {
+                const itemId = l.itemId._id || l.itemId;
+                const lotRes = await api.get('/stock/lots', {
+                    params: { storeId: req.storeId, itemId }
+                });
+
+                const lots = lotRes.data.lots || [];
+                const bestLot = lots[0]; // Pick oldest available lot (FIFO)
+
+                return {
+                    requestLineId: l._id,
+                    itemId: itemId,
+                    itemName: l.itemId.name || 'Unknown Item',
+                    qtyRequested: l.qtyRequested,
+                    qtyApproved: l.qtyApproved,
+                    qtyRemaining: Math.max(0, (l.qtyApproved || 0) - (l.qtyIssued || 0)),
+                    qtyIssued: Math.max(0, (l.qtyApproved || 0) - (l.qtyIssued || 0)), // Default to full remaining
+                    stockLotId: bestLot?._id || '',
+                    lotBalance: bestLot?.qtyBalance || 0,
+                    availableLots: lots
+                };
+            }));
+
             setFormData({
                 ...formData,
                 requestId,
-                lines: req.lines.map(l => ({
-                    itemId: l.itemId._id,
-                    itemName: l.itemId.name,
-                    qtyRequested: l.qtyRequested,
-                    qtyIssued: l.qtyRequested // Default to full issue
-                }))
+                storeId: req.storeId,
+                departmentId: req.departmentId,
+                lines: linesWithLots
             });
+        } catch (err) {
+            console.error(err);
+            setError('Failed to load request details or stock lots');
         }
     };
 
     const handleQtyChange = (index, value) => {
         const lines = [...formData.lines];
-        lines[index].qtyIssued = value;
+        const qty = Number(value);
+
+        // Ensure not exceeding lot balance or remaining approved qty
+        lines[index].qtyIssued = qty;
+        setFormData({ ...formData, lines });
+    };
+
+    const handleLotChange = (index, lotId) => {
+        const lines = [...formData.lines];
+        const selectedLot = lines[index].availableLots.find(lot => lot._id === lotId);
+        lines[index].stockLotId = lotId;
+        lines[index].lotBalance = selectedLot?.qtyBalance || 0;
         setFormData({ ...formData, lines });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/issues', formData);
+            // Map qtyIssued to qty for backend
+            const submissionData = {
+                ...formData,
+                lines: formData.lines.map(l => ({
+                    requestLineId: l.requestLineId,
+                    itemId: l.itemId,
+                    stockLotId: l.stockLotId,
+                    qty: l.qtyIssued
+                })).filter(l => l.qty > 0)
+            };
+
+            await api.post('/issues', submissionData);
             setIsModalOpen(false);
             setFormData({ requestId: '', date: new Date().toISOString().split('T')[0], notes: '', lines: [] });
+            setSelectedRequest(null);
             fetchData();
-        } catch (err) { setError(err.response?.data?.message || 'Failed to process issue'); }
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.message || 'Failed to process issue');
+        }
     };
 
     return (
@@ -95,9 +164,12 @@ const Issues = () => {
                                 <tr key={issue._id}>
                                     <td className="font-bold text-orange-400">{issue.issueNo}</td>
                                     <td>{new Date(issue.date).toLocaleDateString()}</td>
-                                    <td className="text-dim">{issue.requestId?.requestNo || '-'}</td>
+                                    <td>
+                                        <div className="text-sm font-medium">{issue.requestId?.requestNo || '-'}</div>
+                                        <div className="text-[10px] text-dim">{issue.departmentId?.name || '-'}</div>
+                                    </td>
                                     <td>{issue.issuedBy?.name || 'System'}</td>
-                                    <td className="font-bold text-white">{issue.lines?.length || 0} Items</td>
+                                    <td className="font-semibold">{issue.lines?.length || 0} Items</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -106,41 +178,77 @@ const Issues = () => {
             )}
 
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content glass-card scale-in-center max-w-3xl">
-                        <div className="modal-header">
+                <div className="glass-modal-overlay">
+                    <div className="glass-card glass-modal-card scale-in-center max-w-3xl overflow-y-auto max-h-[90vh]">
+                        <div className="modal-vibrant-header">
                             <h2>Process Stock Issue</h2>
-                            <button onClick={() => setIsModalOpen(false)}><X size={24} /></button>
+                            <button className="close-vibrant-btn" onClick={() => setIsModalOpen(false)}><X size={24} /></button>
                         </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="form-group">
-                                    <label>Select Pending Request</label>
-                                    <select className="input-glass" value={formData.requestId} onChange={(e) => handleRequestChange(e.target.value)} required>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="vibrant-form-group">
+                                    <label className="vibrant-label">Select Pending Request</label>
+                                    <select className="vibrant-input" value={formData.requestId} onChange={(e) => handleRequestChange(e.target.value)} required>
                                         <option value="">Select Request No</option>
                                         {requests.map(r => <option key={r._id} value={r._id}>{r.requestNo} ({r.departmentId?.name})</option>)}
                                     </select>
                                 </div>
-                                <div className="form-group">
-                                    <label>Issue Date</label>
-                                    <input type="date" className="input-glass" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} required />
+                                <div className="vibrant-form-group">
+                                    <label className="vibrant-label">Issue Date</label>
+                                    <input type="date" className="vibrant-input" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} required />
                                 </div>
                             </div>
 
                             {selectedRequest && (
                                 <div className="mt-6">
-                                    <h3 className="mb-4 text-orange-400 font-bold flex items-center gap-2"><PackageCheck size={18} /> Allocation Details</h3>
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                                    <h3 className="mb-6 text-orange-400 font-bold flex items-center gap-3"><PackageCheck size={22} /> Allocation Details</h3>
+                                    <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6">
                                         {formData.lines.map((line, index) => (
-                                            <div key={index} className="flex gap-4 items-center mb-3">
-                                                <div className="flex-1 text-sm text-dim">{line.itemName}</div>
-                                                <div className="w-24 text-center">
-                                                    <div className="text-[10px] text-dim uppercase">Requested</div>
-                                                    <div className="font-bold text-white">{line.qtyRequested}</div>
+                                            <div key={index} className="flex flex-col gap-4 mb-8 last:mb-0 slide-in-bottom border-b border-slate-100 pb-6 last:border-0">
+                                                <div className="flex justify-between items-center">
+                                                    <div className="text-sm font-bold text-slate-800">{line.itemName}</div>
+                                                    <div className="text-[10px] px-3 py-1 bg-orange-100 text-orange-600 rounded-full font-bold uppercase tracking-wider">
+                                                        Remaining: {line.qtyRemaining}
+                                                    </div>
                                                 </div>
-                                                <div className="w-32">
-                                                    <div className="text-[10px] text-orange-400 uppercase">Issuing Ahora</div>
-                                                    <input type="number" className="input-glass text-center font-bold" value={line.qtyIssued} onChange={(e) => handleQtyChange(index, e.target.value)} max={line.qtyRequested} min="0" required />
+
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    <div className="vibrant-form-group mb-0">
+                                                        <label className="text-[10px] text-dim uppercase mb-1 block">Stock Lot (FIFO)</label>
+                                                        <select
+                                                            className="vibrant-input py-2 text-sm"
+                                                            value={line.stockLotId}
+                                                            onChange={(e) => handleLotChange(index, e.target.value)}
+                                                            required
+                                                        >
+                                                            <option value="">Select Lot</option>
+                                                            {line.availableLots.map(lot => (
+                                                                <option key={lot._id} value={lot._id}>
+                                                                    {lot.grnNo} (Bal: {lot.qtyBalance})
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="vibrant-form-group mb-0">
+                                                        <label className="text-[10px] text-dim uppercase mb-1 block">Lot Balance</label>
+                                                        <div className="vibrant-input py-2 text-sm bg-slate-50 text-center font-bold">
+                                                            {line.lotBalance}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="vibrant-form-group mb-0">
+                                                        <label className="text-[10px] text-orange-400 uppercase mb-1 block">Issuing Now</label>
+                                                        <input
+                                                            type="number"
+                                                            className="vibrant-input py-2 text-sm text-center font-bold"
+                                                            value={line.qtyIssued}
+                                                            onChange={(e) => handleQtyChange(index, e.target.value)}
+                                                            max={Math.min(line.qtyRemaining, line.lotBalance)}
+                                                            min="0"
+                                                            required
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
@@ -148,14 +256,14 @@ const Issues = () => {
                                 </div>
                             )}
 
-                            <div className="form-group mt-4">
-                                <label>Notes</label>
-                                <textarea className="input-glass" rows="2" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} placeholder="Internal notes..."></textarea>
+                            <div className="vibrant-form-group mt-8">
+                                <label className="vibrant-label">Internal Notes</label>
+                                <textarea className="vibrant-input" rows="2" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} placeholder="Add any relevant tracking notes..."></textarea>
                             </div>
 
-                            <div className="modal-actions">
-                                <button type="button" className="btn-secondary w-full" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary w-full" disabled={!selectedRequest}>Complete Issue</button>
+                            <div className="vibrant-modal-actions mt-10">
+                                <button type="button" className="btn-secondary flex-1" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn-primary flex-1" style={{ justifyContent: 'center' }} disabled={!selectedRequest}>Complete Issue</button>
                             </div>
                         </form>
                     </div>

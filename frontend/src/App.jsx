@@ -10,6 +10,7 @@ import GRNs from './pages/GRNs';
 import Requests from './pages/Requests';
 import Issues from './pages/Issues';
 import Stock from './pages/Stock';
+import Reports from './pages/Reports';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './index.css';
 
@@ -123,10 +124,7 @@ function App() {
           <Route path="/reports" element={
             <ProtectedRoute>
               <Layout>
-                <div className="p-8 bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-800 font-bold text-center py-20">
-                  <h2 className="text-2xl mb-2">Reports Module</h2>
-                  <p className="text-gray-500 font-normal">Coming Soon: Detailed system analytics and export tools.</p>
-                </div>
+                <Reports />
               </Layout>
             </ProtectedRoute>
           } />

@@ -18,7 +18,10 @@ router.get("/", requireAuth, enforceStoreScope, async (req, res) => {
   if (from) q.date.$gte = new Date(from);
   if (to) q.date.$lte = new Date(to);
 
-  const grns = await GRN.find(q).sort({ date: -1 });
+  const grns = await GRN.find(q)
+    .populate("storeId", "name")
+    .populate("supplierId", "name")
+    .sort({ date: -1 });
   res.json({ grns });
 });
 
@@ -39,7 +42,7 @@ router.get("/:id", requireAuth, async (req, res) => {
 });
 
 // create draft
-router.post("/", requireAuth, requireRole("ADMIN","STORE_KEEPER"), enforceStoreScope, async (req, res) => {
+router.post("/", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), enforceStoreScope, async (req, res) => {
   const { storeId, supplierId, date, note, lines } = req.body;
 
   const grn = await GRN.create({
@@ -71,7 +74,7 @@ router.post("/", requireAuth, requireRole("ADMIN","STORE_KEEPER"), enforceStoreS
 });
 
 // update draft only
-router.put("/:id", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (req, res) => {
+router.put("/:id", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), async (req, res) => {
   const grn = await GRN.findById(req.params.id);
   if (!grn) return res.status(404).json({ message: "Not found" });
 
@@ -107,7 +110,7 @@ router.put("/:id", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (req,
 });
 
 // delete draft only (safe MVP)
-router.delete("/:id", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (req, res) => {
+router.delete("/:id", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), async (req, res) => {
   const grn = await GRN.findById(req.params.id);
   if (!grn) return res.status(404).json({ message: "Not found" });
 
@@ -125,7 +128,7 @@ router.delete("/:id", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (r
 });
 
 // POST GRN -> create lots
-router.post("/:id/post", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (req, res) => {
+router.post("/:id/post", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), async (req, res) => {
   const grn = await GRN.findById(req.params.id);
   if (!grn) return res.status(404).json({ message: "Not found" });
 

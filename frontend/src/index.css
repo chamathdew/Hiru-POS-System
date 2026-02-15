@@ -2,18 +2,18 @@
 
 :root {
   --primary: #FF8C00;
-  --primary-glow: rgba(255, 140, 0, 0.3);
+  --primary-glow: rgba(255, 140, 0, 0.2);
   --secondary: #FFA500;
 
-  --bg-deep: #0b0d11;
-  --bg-card: rgba(26, 29, 36, 0.6);
-  --bg-sidebar: rgba(15, 17, 23, 0.8);
+  --bg-deep: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-sidebar: #f9fbfc;
 
-  --text-main: #ffffff;
-  --text-dim: #a0aec0;
+  --text-main: #1a1c21;
+  --text-dim: #64748b;
 
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-border-bright: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-border-bright: rgba(0, 0, 0, 0.1);
 
   --sidebar-width: 280px;
 }
@@ -28,8 +28,8 @@ body {
   font-family: 'Outfit', sans-serif;
   background-color: var(--bg-deep);
   background-image:
-    radial-gradient(circle at 0% 0%, rgba(255, 140, 0, 0.07) 0%, transparent 45%),
-    radial-gradient(circle at 100% 100%, rgba(255, 165, 0, 0.03) 0%, transparent 45%);
+    radial-gradient(circle at 10% 20%, rgba(255, 140, 0, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(255, 165, 0, 0.03) 0%, transparent 40%);
   color: var(--text-main);
   min-height: 100vh;
   overflow-x: hidden;
@@ -41,11 +41,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-deep);
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #cbd5e1;
   border-radius: 10px;
 }
 
@@ -62,7 +62,6 @@ body {
   flex: 1;
   margin-left: var(--sidebar-width);
   padding: 3.5rem;
-  /* Increased padding for breathing room */
   width: calc(100% - var(--sidebar-width));
   min-height: 100vh;
   transition: all 0.3s ease;
@@ -72,7 +71,7 @@ h1,
 h2,
 h3,
 h4 {
-  color: white;
+  color: var(--text-main);
   letter-spacing: -0.02em;
 }
 
@@ -80,7 +79,7 @@ h4 {
   font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  text-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+  color: #0f172a;
 }
 
 .page-subtitle {
@@ -89,21 +88,25 @@ h4 {
   margin-bottom: 2.5rem;
 }
 
-/* Premium Card (Glassmorphism) */
+/* Premium Card (Glassmorphism Light) */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+  border-radius: 32px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.02);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  border-color: var(--glass-border-bright);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 140, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.06),
+    0 8px 16px rgba(0, 0, 0, 0.03);
 }
 
 /* Buttons */

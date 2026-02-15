@@ -82,8 +82,8 @@ const Stores = () => {
                     <div style={{ fontSize: '1.2rem', color: 'var(--text-dim)' }}>Fetching store registry...</div>
                 </div>
             ) : (
-                <div className="glass-card glass-table-container fade-in">
-                    <table className="premium-table">
+                <div className="glass-card table-container fade-in">
+                    <table className="custom-table">
                         <thead>
                             <tr>
                                 <th>Registry ID</th>
@@ -96,14 +96,14 @@ const Stores = () => {
                         <tbody>
                             {stores.map(store => (
                                 <tr key={store._id}>
-                                    <td className="code-accent">{store.code}</td>
+                                    <td className="text-orange-vibrant font-bold">{store.code}</td>
                                     <td style={{ fontWeight: 600, color: 'white' }}>{store.name}</td>
                                     <td>{store.location}</td>
                                     <td style={{ color: 'var(--text-dim)', fontSize: '0.95rem' }}>
                                         {new Date(store.createdAt).toLocaleDateString()}
                                     </td>
                                     <td style={{ textAlign: 'right' }}>
-                                        <button className="glass-action-btn danger" title="Delete Store" onClick={async () => {
+                                        <button className="action-btn delete" title="Delete Store" onClick={async () => {
                                             if (window.confirm("Confirm removal of this store location?")) {
                                                 try {
                                                     await axios.delete(`/stores/${store._id}`);

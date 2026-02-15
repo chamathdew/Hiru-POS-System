@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogIn } from 'lucide-react';
 import logo from '../assets/logo.png';
@@ -9,17 +10,26 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/dashboard');
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-        try {
-            await login(email, password);
-        } catch (err) {
-            setError(err.response?.data?.message || 'Authentication failed');
-        } finally {
+
+        const result = await login(email, password);
+
+        if (result.success) {
+            navigate('/dashboard');
+        } else {
+            setError(result.message);
             setLoading(false);
         }
     };
@@ -31,11 +41,7 @@ const Login = () => {
 
             <div className="glass-card login-vibrant-card fade-in">
                 <div className="login-vibrant-header">
-                    <div className="logo-vibrant-box">
-                        <img src={logo} alt="H" style={{ width: '32px' }} />
-                    </div>
-                    <h1>Hiru POS</h1>
-                    <p>Logistical Enterprise Solutions</p>
+                    <img src={logo} alt="Hiru POS" className="login-main-logo" />
                 </div>
 
                 {error && <div className="vibrant-error-alert" style={{ padding: '1rem', marginBottom: '2rem' }}>{error}</div>}

@@ -1,9 +1,9 @@
 .glass-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -13,12 +13,15 @@
 
 .glass-modal-card {
     width: 100%;
-    max-width: 580px;
-    padding: 3.5rem;
+    max-width: 620px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+    background: white !important;
 }
 
 .modal-vibrant-header {
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -27,19 +30,28 @@
 .modal-vibrant-header h2 {
     font-size: 1.8rem;
     font-weight: 700;
+    color: #0f172a;
 }
 
 .close-vibrant-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .close-vibrant-btn:hover {
-    color: white;
-    transform: rotate(90deg);
+    color: #0f172a;
+    background: #e2e8f0;
+    transform: rotate(90deg) scale(1.1);
 }
 
 .vibrant-form-group {
@@ -49,28 +61,31 @@
 .vibrant-label {
     display: block;
     margin-bottom: 0.8rem;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: #cbd5e0;
+    color: #475569;
+    letter-spacing: 0.5px;
 }
 
-.vibrant-input {
+.vibrant-input,
+.input-glass {
     width: 100%;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--glass-border);
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
     padding: 1.1rem 1.4rem;
-    color: white;
+    color: #1e293b;
     font-family: inherit;
     font-size: 1.05rem;
     transition: all 0.3s ease;
 }
 
-.vibrant-input:focus {
+.vibrant-input:focus,
+.input-glass:focus {
     outline: none;
     border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 0 25px rgba(255, 140, 0, 0.15);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
 }
 
 .vibrant-modal-actions {
@@ -80,9 +95,9 @@
 }
 
 .vibrant-error-alert {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #b91c1c;
     padding: 1.2rem 1.8rem;
     border-radius: 18px;
     margin-bottom: 2.5rem;
@@ -104,4 +119,37 @@
 
 .w-full-vibrant {
     width: 100%;
+}
+
+.text-orange-vibrant {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.table-vibrant-container {
+    overflow-x: auto;
+    border-radius: 24px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-in-bottom {
+    animation: slideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

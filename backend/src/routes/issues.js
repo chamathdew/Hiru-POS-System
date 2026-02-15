@@ -20,13 +20,17 @@ router.get("/", requireAuth, enforceStoreScope, async (req, res) => {
   if (from) q.date.$gte = new Date(from);
   if (to) q.date.$lte = new Date(to);
 
-  const issues = await Issue.find(q).sort({ date: -1 });
+  const issues = await Issue.find(q)
+    .populate("requestId", "requestNo")
+    .populate("departmentId", "name")
+    .populate("issuedBy", "name")
+    .sort({ date: -1 });
   res.json({ issues });
 });
 
 // create issue
 // body: { storeId, requestId, departmentId, date, lines:[{ requestLineId, itemId, stockLotId, qty }] }
-router.post("/", requireAuth, requireRole("ADMIN","STORE_KEEPER"), enforceStoreScope, async (req, res) => {
+router.post("/", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), enforceStoreScope, async (req, res) => {
   const { storeId, requestId, departmentId, date, lines } = req.body;
 
   const request = await Request.findById(requestId);
@@ -35,7 +39,7 @@ router.post("/", requireAuth, requireRole("ADMIN","STORE_KEEPER"), enforceStoreS
   if (String(request.storeId) !== String(storeId)) return res.status(400).json({ message: "Request store mismatch" });
   if (String(request.departmentId) !== String(departmentId)) return res.status(400).json({ message: "Department mismatch" });
 
-  if (!["APPROVED","PARTIALLY_ISSUED"].includes(request.status)) {
+  if (!["APPROVED", "PARTIALLY_ISSUED"].includes(request.status)) {
     return res.status(400).json({ message: "Request not approved" });
   }
 

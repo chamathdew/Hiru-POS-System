@@ -19,7 +19,10 @@ router.get("/", requireAuth, enforceStoreScope, async (req, res) => {
   if (from) q.date.$gte = new Date(from);
   if (to) q.date.$lte = new Date(to);
 
-  const requests = await Request.find(q).sort({ date: -1 });
+  const requests = await Request.find(q)
+    .populate("departmentId", "name")
+    .populate("requestedBy", "name")
+    .sort({ date: -1 });
   res.json({ requests });
 });
 
@@ -35,12 +38,12 @@ router.get("/:id", requireAuth, async (req, res) => {
     }
   }
 
-  const lines = await RequestLine.find({ requestId: r._id });
+  const lines = await RequestLine.find({ requestId: r._id }).populate("itemId", "name code");
   res.json({ request: r, lines });
 });
 
 // create (department user or store keeper/admin)
-router.post("/", requireAuth, requireRole("ADMIN","STORE_KEEPER","DEPT_USER"), enforceStoreScope, async (req, res) => {
+router.post("/", requireAuth, requireRole("ADMIN", "STORE_KEEPER", "DEPT_USER"), enforceStoreScope, async (req, res) => {
   const { storeId, departmentId, date, note, lines } = req.body;
 
   // validate department belongs to store
@@ -71,7 +74,7 @@ router.post("/", requireAuth, requireRole("ADMIN","STORE_KEEPER","DEPT_USER"), e
 });
 
 // approve (store keeper)
-router.put("/:id/approve", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (req, res) => {
+router.put("/:id/approve", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), async (req, res) => {
   const r = await Request.findById(req.params.id);
   if (!r) return res.status(404).json({ message: "Not found" });
 
@@ -81,7 +84,7 @@ router.put("/:id/approve", requireAuth, requireRole("ADMIN","STORE_KEEPER"), asy
     }
   }
 
-  if (!["SUBMITTED","PARTIALLY_ISSUED"].includes(r.status)) {
+  if (!["SUBMITTED", "PARTIALLY_ISSUED"].includes(r.status)) {
     return res.status(400).json({ message: "Invalid status to approve" });
   }
 
@@ -105,7 +108,7 @@ router.put("/:id/approve", requireAuth, requireRole("ADMIN","STORE_KEEPER"), asy
 });
 
 // reject
-router.put("/:id/reject", requireAuth, requireRole("ADMIN","STORE_KEEPER"), async (req, res) => {
+router.put("/:id/reject", requireAuth, requireRole("ADMIN", "STORE_KEEPER"), async (req, res) => {
   const r = await Request.findById(req.params.id);
   if (!r) return res.status(404).json({ message: "Not found" });
 
